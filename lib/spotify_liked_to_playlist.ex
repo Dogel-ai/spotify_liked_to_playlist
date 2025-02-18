@@ -3,8 +3,7 @@ defmodule SpotifyLikedToPlaylist do
 
   def access_token() do
     {client_id, client_secret} = secrets()
-    IO.puts(client_id)
-    IO.puts(client_secret)
+
     {:ok, _} = Finch.start_link(name: MyFinch)
     req = Finch.build(
       :post,
