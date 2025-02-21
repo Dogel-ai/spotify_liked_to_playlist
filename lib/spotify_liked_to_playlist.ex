@@ -1,15 +1,19 @@
 defmodule SpotifyLikedToPlaylist do
+  @redirect_uri "http://127.0.0.1:3000/callback"
   def secrets(), do: {System.get_env("CLIENT_ID"), System.get_env("CLIENT_SECRET")}
 
-  def access_token() do
+  def run() do
+    {:ok, _} = Finch.start_link(name: MyFinch)
+  end
+
+  def access_token(user_code) do
     {client_id, client_secret} = secrets()
 
-    {:ok, _} = Finch.start_link(name: MyFinch)
     req = Finch.build(
       :post,
       "https://accounts.spotify.com/api/token",
-      [{"Content-Type", "application/x-www-form-urlencoded"}],
-      "grant_type=client_credentials&client_id=#{client_id}&client_secret=#{client_secret}"
+      [{"Content-Type", "application/x-www-form-urlencoded"}, {"Authorization", "Basic #{Base.encode64("#{client_id}:#{client_secret}")}"}],
+      "grant_type=authorization_code&code=#{user_code}&redirect_uri=#{@redirect_uri}"
     )
     {:ok, resp} = Finch.request(req, MyFinch)
 
