@@ -24,4 +24,14 @@ defmodule SpotifyLikedToPlaylist do
       true -> raise "expected code 200, got #{resp.status}"
     end
   end
+
+  def get_saved_tracks(access_token, next_link \\ "https://api.spotify.com/v1/me/tracks") do
+    req = Finch.build(
+      :get,
+      next_link,
+      [{"Authorization", "Bearer #{access_token}"}]
+    )
+    {:ok, resp} = Finch.request(req, MyFinch)
+    {req, resp}
+  end
 end
